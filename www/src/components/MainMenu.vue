@@ -2,10 +2,10 @@
     .main-menu__wrapper
         img.pull-right(src='img/main-menu.png', @click='open')
         ul.main-menu(:class='{ active: active }')
-            li.main-menu__item
+            li.main-menu__item(@click='go(\'dashboard\')')
                 i.fa.fa-tachometer
                 span.main-menu__item__text Dashboard
-            li.main-menu__item
+            li.main-menu__item(@click='go(\'transaction\')')
                 i.fa.fa-pencil-square-o
                 span.main-menu__item__text Transaksi
             li.main-menu__item
@@ -31,6 +31,11 @@
         methods: {
             close () {
                 this.active = false
+            },
+
+            go(page) {
+                this.active = false
+                this.$router.push(page)
             },
 
             open() {

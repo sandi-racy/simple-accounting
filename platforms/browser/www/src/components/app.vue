@@ -1,6 +1,7 @@
 <template lang="jade">
     .container
         app-header
+        router-view
 </template>
 
 <script>
