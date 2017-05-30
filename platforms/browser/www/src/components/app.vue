@@ -15,6 +15,9 @@
 </script>
 
 <style lang="stylus">
+    .container
+        font-family: bariol;
+
     ul
         list-style: none
         margin: 0px

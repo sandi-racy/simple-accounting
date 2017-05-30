@@ -49,7 +49,7 @@
     .main-menu
         background: #F3F6FB
         height: 100%
-        font-size: 16px
+        font-size: 18px
         position: fixed
         top: 0px
         right: -70%
