@@ -1,3 +1,4 @@
 <template lang="jade">
-    .row Dashboard
+    .row
+        .col-md-12 Dashboard
 </template>

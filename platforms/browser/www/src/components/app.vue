@@ -1,22 +1,24 @@
 <template lang="jade">
     .container
-        app-header
-        router-view
+        main-menu
+        .row.body
+            .col-md-12
+                router-view
 </template>
 
 <script>
-	import AppHeader from './AppHeader.vue'
+	import MainMenu from './MainMenu.vue'
 
 	export default {
 		components: {
-			AppHeader
+			MainMenu
 		}
 	}
 </script>
 
 <style lang="stylus">
-    .container
-        font-family: bariol;
+    *
+        box-sizing: border-box
 
     ul
         list-style: none
@@ -27,4 +29,11 @@
             list-style: none
             margin: 0px
             padding: 0px
+
+    .html
+        background: #F3F6FB
+
+    .container
+        font-family: 'bariol'
+        padding-top: 60px
 </style>

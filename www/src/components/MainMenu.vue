@@ -1,11 +1,12 @@
 <template lang="jade">
     .main-menu__wrapper
+        h3.main-menu__title {{ title }}
         img.pull-right(src='img/main-menu.png', @click='open')
         ul.main-menu(:class='{ active: active }')
-            li.main-menu__item(@click='go(\'dashboard\')')
+            li.main-menu__item(@click='go(\'dashboard\', \'Dashboard\')')
                 i.fa.fa-tachometer
                 span.main-menu__item__text Dashboard
-            li.main-menu__item(@click='go(\'transaction\')')
+            li.main-menu__item(@click='go(\'transaction\', \'Transaksi\')')
                 i.fa.fa-pencil-square-o
                 span.main-menu__item__text Transaksi
             li.main-menu__item
@@ -24,7 +25,8 @@
     export default {
         data() {
             return {
-                active: false
+                active: false,
+                title: 'Dashboard'
             }
         },
 
@@ -33,7 +35,8 @@
                 this.active = false
             },
 
-            go(page) {
+            go(page, title) {
+                this.title = title;
                 this.active = false
                 this.$router.push(page)
             },
@@ -46,6 +49,23 @@
 </script>
 
 <style lang="stylus" scoped>
+    .main-menu__wrapper
+        background: #7BABED
+        left: 0px
+        overflow: hidden
+        padding: 10px
+        position: fixed
+        top: 0px
+        width: 100%
+        z-index: 100
+
+    .main-menu__title
+        color: #FFFFFF
+        float: left
+        margin: 0px
+        position: relative
+        top: 3px
+
     .main-menu
         background: #F3F6FB
         height: 100%

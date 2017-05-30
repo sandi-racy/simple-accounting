@@ -1,3 +1,5 @@
 <template lang="jade">
-    .row Transaction
+    .row
+        .col-md-12
+            h1  Transaksi
 </template>
