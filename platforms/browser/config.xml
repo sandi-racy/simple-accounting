@@ -6,9 +6,9 @@
     <feature name="Device">
         <param name="browser-package" value="Device" />
     </feature>
-    <name>Akuntansi Dasar</name>
-    <description>Hello World sample application that responds to the deviceready event.</description>
-    <author email="support@phonegap.com" href="http://phonegap.com">PhoneGap Team</author>
+    <name>Simple Accounting</name>
+    <description>Simple Accounting.</description>
+    <author email="ndi_racy@rocketmai.com" href="http://sandi-racy.github.o">Sandi Rosyandi</author>
     <content src="index.html" />
     <icon src="icon.png" />
     <access origin="*" />
