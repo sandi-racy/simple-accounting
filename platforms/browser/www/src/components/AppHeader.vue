@@ -1,26 +1,21 @@
 <template lang="jade">
-    .header
-        main-menu
+    .col-md-12.header
+        h3.header__title
+            i.fa.fa-chevron-left.header__back(@click="go('/')")
+            slot
 </template>
-
-<script>
-	import MainMenu from './MainMenu.vue'
-
-	export default {
-		components: {
-			MainMenu
-		}
-	}
-</script>
 
 <style lang="stylus" scoped>
     .header
         background: #54B0F3
-        left: 0px
-        overflow: hidden
+        margin-bottom: 10px
         padding: 10px
-        position: fixed
-        top: 0px
-        width: 100%
-        z-index: 100
+
+    .header__title
+        color: #FFFFFF
+        margin: 0px
+
+    .header__back
+        font-size: 20px
+        margin-right: 10px
 </style>

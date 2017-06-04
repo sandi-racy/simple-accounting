@@ -1,15 +1,15 @@
 <template lang="jade">
     .main-menu__wrapper
-        h3.main-menu__title {{ title }}
+        h3.main-menu__title Dashboard
         img.pull-right(src='img/main-menu.png', @click='open')
         ul.main-menu(:class='{ active: active }')
-            li.main-menu__item(@click='go(\'dashboard\', \'Dashboard\')')
+            li.main-menu__item(@click="go('/')")
                 i.fa.fa-tachometer
                 span.main-menu__item__text Dashboard
-            li.main-menu__item(@click='go(\'transaction\', \'Transaksi\')')
+            li.main-menu__item(@click="go('/transaction')")
                 i.fa.fa-pencil-square-o
                 span.main-menu__item__text Transaksi
-            li.main-menu__item
+            li.main-menu__item(@click="go('/journal')")
                 i.fa.fa-list
                 span.main-menu__item__text Ayat Jurnal
             li.main-menu__item
@@ -25,18 +25,16 @@
     export default {
         data() {
             return {
-                active: false,
-                title: 'Dashboard'
+                active: false
             }
         },
 
         methods: {
-            close () {
+            close() {
                 this.active = false
             },
 
             go(page, title) {
-                this.title = title;
                 this.active = false
                 this.$router.push(page)
             },
@@ -50,7 +48,7 @@
 
 <style lang="stylus" scoped>
     .main-menu__wrapper
-        background: #7BABED
+        background: #54B0F3
         left: 0px
         overflow: hidden
         padding: 10px
@@ -68,11 +66,11 @@
 
     .main-menu
         background: #F3F6FB
-        height: 100%
+        height: 1000%
         font-size: 18px
         position: fixed
         top: 0px
-        right: -70%
+        right: -80%
         transition: all 0.5s
         width: 70%
         z-index: 100
@@ -90,7 +88,7 @@
     .main-menu__overlay
         background: #DBDFEA
         display: none
-        height: 100%
+        height: 1000%
         opacity: 0.9
         position: fixed
         right: 0px
