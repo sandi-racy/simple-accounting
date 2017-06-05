@@ -14,11 +14,15 @@ Vue.use(TransactionsTable)
 
 import App from './components/App.vue'
 import Dashboard from './components/Dashboard.vue'
+import Account from './components/Account.vue'
+import AccountEdit from './components/AccountEdit.vue'
 import Transaction from './components/Transaction.vue'
 import Journal from './components/Journal.vue'
 
 const routes = [
 	{ path: '/', component: Dashboard },
+	{ path: '/account', component: Account },
+	{ path: '/account/:id', component: AccountEdit },
 	{ path: '/transaction', component: Transaction },
 	{ path: '/journal', component: Journal }
 ]
@@ -77,7 +81,7 @@ var Phonegap = {
 							isExist = true
 						}
 						resolve(isExist)
-					}, null)
+					})
 				})
 			}
 		}

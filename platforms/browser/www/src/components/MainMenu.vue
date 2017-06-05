@@ -6,6 +6,9 @@
             li.main-menu__item(@click="go('/')")
                 i.fa.fa-tachometer
                 span.main-menu__item__text Dashboard
+            li.main-menu__item(@click="go('/account')")
+                i.fa.fa-user
+                span.main-menu__item__text Master Akun
             li.main-menu__item(@click="go('/transaction')")
                 i.fa.fa-pencil-square-o
                 span.main-menu__item__text Transaksi

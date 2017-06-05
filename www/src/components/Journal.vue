@@ -1,6 +1,6 @@
 <template lang="jade">
-    .row.journal
-        app-header Ayat Jurnal
+    .row.page
+        app-header(path='/') Ayat Jurnal
         .col-md-12
             h4 Journal
 </template>
@@ -14,10 +14,3 @@
 		}
 	}
 </script>
-
-<style lang="stylus" scoped>
-    .journal
-        position: absolute
-        top: 0px
-        width: 100%
-</style>

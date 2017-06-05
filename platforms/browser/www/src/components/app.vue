@@ -5,7 +5,10 @@
 </template>
 
 <script>
+    import swal from 'sweetalert'
+
     import Boostrap from 'bootstrap/dist/css/bootstrap.min.css'
+    import SweetAlertCss from 'sweetalert/dist/sweetalert.css'
 
     export default {
         methods: {
@@ -16,7 +19,6 @@
 
     			tl.set(el, {
     				x: window.innerWidth * 1.5,
-    				scale: 0.8,
     				transformOrigin: '50% 50%'
     			})
 
@@ -26,7 +28,6 @@
     			});
 
     			tl.to(el, 1, {
-    				scale: 1,
     				ease: Power4.easeOut
     			});
             },
@@ -77,7 +78,15 @@
         font-size: 16px
         padding-bottom: 20px
 
+    .page
+        position: absolute
+        top: 0px
+        width: 100%
+
     .input-group
         .form-control
             z-index: 0
+
+    .button__edit
+        margin-right: 5px
 </style>

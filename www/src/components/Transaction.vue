@@ -1,6 +1,6 @@
 <template lang="jade">
-    .row.transaction
-        app-header Transaksi
+    .row.page
+        app-header(path='/') Transaksi
         .col-md-12
             form(@submit.prevent='submit')
                 ul.alert.alert-danger(v-show='isError')
@@ -21,11 +21,9 @@
 
 <script>
     import AppHeader from './AppHeader.vue'
-    import swal from 'sweetalert'
     import VueAwesomplete from 'vue-awesomplete'
     import VueNumeric from 'vue-numeric'
 
-    import SweetAlertCss from 'sweetalert/dist/sweetalert.css'
     import VueAwesompleteCss from 'awesomplete/awesomplete.css'
 
     export default {
@@ -57,16 +55,7 @@
                 if (this.validate()) {
                     this.isError = false
 
-                    swal({
-                        title: 'Apakah anda yakin?',
-                        type: 'warning',
-                        showCancelButton: true,
-                        cancelButtonColor: '#DBDFEA',
-                        cancelButtonText: 'Tidak',
-                        confirmButtonColor: '#54B0F3',
-                        confirmButtonText: "Ya",
-                        closeOnConfirm: false
-                    }, async () => {
+                    this.alert.confirm('Apakah anda yakin', null, 'warning', async () => {
                         let isAccountFromNameExist = await this.accountsTable.isNameExist(this.account.from)
                         let isAccountToNameExist = await this.accountsTable.isNameExist(this.account.to)
 
@@ -83,13 +72,9 @@
 
                         this.transactionsTable.insert(accountFromId, accountToId, this.value)
 
-                        swal({
-                            title: 'Data berhasil disimpan',
-                            confirmButtonColor: '#54B0F3',
-                            confirmButtonText: 'Ok'
-                        }, () => {
+                        this.alert.info('Data berhasil disimpan', () => {
                             self.$router.push('/')
-                        });
+                        })
                     })
                 } else {
                     this.isError = true
@@ -129,16 +114,14 @@
             AppHeader, VueAwesomplete, VueNumeric
         },
 
-        mounted() {
-            this.$refs.accountFrom.list(this.accountsTable.getAll())
-            this.$refs.accountTo.list(this.accountsTable.getAll())
+        async mounted() {
+            let accounts = []
+            let accountsTable = await this.accountsTable.getAll()
+            for (let i = 0; i < accountsTable.length; i++) {
+                accounts.push(accountsTable[i].name)
+            }
+            this.$refs.accountFrom.list(accounts)
+            this.$refs.accountTo.list(accounts)
         }
     }
 </script>
-
-<style lang="stylus" scoped>
-    .transaction
-        position: absolute
-        top: 0px
-        width: 100%
-</style>
