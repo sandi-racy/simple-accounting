@@ -1,127 +1,145 @@
 <template lang="jade">
     .row.page
-        app-header(path='/') Transaksi
+        app-header(path='/') Transactions
         .col-md-12
-            form(@submit.prevent='submit')
-                ul.alert.alert-danger(v-show='isError')
-                    li(v-for="error in messages.errors") {{ error }}
-                .form-group
-                    label Dari Akun
-                    vue-awesomplete.form-control(:setting='accounts', v-model='account.from', ref='accountFrom')
-                .form-group
-                    label Ke Akun
-                    vue-awesomplete.form-control(:setting='accounts', v-model='account.to', ref='accountTo')
-                .form-group
-                    label Nilai
-                    .input-group
-                        .input-group-addon Rp
-                        vue-numeric.form-control(v-model='value')
-                button.btn.btn-primary.btn-block(:disabled='disabled') Simpan
+            .row.text-right
+                .col-md-12
+                    button.btn.btn-primary.button__option(@click='toggleFilter')
+                        .fa.fa-filter
+                    router-link.btn.btn-primary(to='/transaction/create')
+                        .fa.fa-plus
+            .row.filter(v-show='filter.active')
+                .col-md-12
+                    form.form-inline(@submit.prevent='doFilter')
+                        .form-group
+                            vue-date-picker(:date="{ startTime: { time: '' } }", :option='datePicker.option', @change='setDateStart')
+                            vue-date-picker(:date="{ startTime: { time: '' } }", :option='datePicker.option', @change='setDateEnd')
+                        button.btn.btn-primary.btn-block Filter
+            .row
+                .col-md-12
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Date
+                                th From
+                                th To
+                                th Nominal
+                        tbody
+                            v-touch(tag='tr', v-on:press='press(transaction.rowid)', v-for='transaction in transactions')
+                                td {{ transaction.date | date }}
+                                td {{ transaction.account_from }}
+                                td {{ transaction.account_to }}
+                                td.text-right {{ transaction.value | price }}
+            .row
+                .col-md-12
+                    button.btn.btn-primary.btn-block(@click='loadTransaction', v-show='showLoadMore') Load more
 </template>
 
 <script>
+    import moment from 'moment'
+    import VueDatePicker from 'vue-datepicker'
     import AppHeader from './AppHeader.vue'
-    import VueAwesomplete from 'vue-awesomplete'
-    import VueNumeric from 'vue-numeric'
-
-    import VueAwesompleteCss from 'awesomplete/awesomplete.css'
 
     export default {
         data() {
             return {
-                account: {
-                    from: '',
-                    to: ''
+                datePicker: {
+                    option: {
+                        type: 'day',
+                        week: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+                        month: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                        format: 'DD-MM-YYYY',
+                        color: {
+                            header: '#54B0F3',
+                            headerText: '#FFFFFF'
+                        },
+                        inputStyle: {
+                            'padding': '6px',
+                            'width': '100%'
+                        },
+                    }
                 },
-                accounts: {
-                    list: [],
-                    minChars: 0
+                filter: {
+                    active: false,
+                    date: {
+                        start: '2010-01-01',
+                        end: '2018-05-06'
+                    }
                 },
-                disabled: false,
-                isError: false,
-                messages: {
-                    errors: []
+                page: {
+                    count: 0,
+                    skip: 0,
+                    take: 1
                 },
-                value: 0
+                transactions: []
             }
         },
 
         methods: {
-            submit() {
-                let self = this
+            async doFilter() {
+                this.filter.date.start = moment(this.filter.date.start, 'DD-MM-YYYY').format('YYYY-MM-DD')
+                this.filter.date.end = moment(this.filter.date.end, 'DD-MM-YYYY').format('YYYY-MM-DD')
 
-                this.disabled = true
-
-                if (this.validate()) {
-                    this.isError = false
-
-                    this.alert.confirm('Apakah anda yakin', null, 'warning', async () => {
-                        let isAccountFromNameExist = await this.accountsTable.isNameExist(this.account.from)
-                        let isAccountToNameExist = await this.accountsTable.isNameExist(this.account.to)
-
-                        if (!isAccountFromNameExist) {
-                            this.accountsTable.insert(this.account.from)
-                        }
-
-                        if (!isAccountToNameExist) {
-                            this.accountsTable.insert(this.account.to)
-                        }
-
-                        let accountFromId = await this.accountsTable.getId(this.account.from)
-                        let accountToId = await this.accountsTable.getId(this.account.to)
-
-                        this.transactionsTable.insert(accountFromId, accountToId, this.value)
-
-                        this.alert.info('Data berhasil disimpan', () => {
-                            self.$router.push('/')
-                        })
-                    })
-                } else {
-                    this.isError = true
-                }
-
-                this.disabled = false
+                this.page.count = await this.transactionsTable.countAll(this.filter)
+                this.page.skip = 0
+                this.transactions = await this.transactionsTable.getAll(this.page, this.filter)
+                this.page.skip += this.page.take
             },
 
-            validate() {
-                this.messages.errors = [];
+            async loadTransaction() {
+                let transactions = await this.transactionsTable.getAll(this.page, this.filter)
+                transactions.forEach((transaction) => {
+                    this.transactions.push(transaction)
+                })
+                this.page.skip += this.page.take
+            },
 
-                if (this.account.from.trim() == '') {
-                    this.messages.errors.push('Kotak isian dari Akun harus diisi')
-                }
+            press(rowid) {
+                this.action.choose((isDeleted) => {
+                    if (isDeleted) {
+                        this.alert.confirm('Are you sure?', null, 'warning', () => {
+                            this.transactionsTable.remove(rowid)
 
-                if (this.account.to.trim() == '') {
-                    this.messages.errors.push('Kotak isian ke Akun harus diisi')
-                }
+                            this.alert.info('Data has been deleted', async () => {
+                                this.transactions = await this.transactionsTable.getAll(this.filter)
+                            })
+                        })
+                    } else {
+                        this.$router.push('/transaction/edit/' + rowid)
+                    }
+                })
+            },
 
-                if (this.account.from.trim() == this.account.to.trim()) {
-                    this.messages.errors.push('Kotak isian dari Akun dan ke Akun tidak boleh sama')
-                }
+            setDateEnd(date) {
+                this.filter.date.end = date
+            },
 
-                if (this.value <= 0) {
-                    this.messages.errors.push('Kotak isian nilai harus lebih besar dari 0')
-                }
+            setDateStart(date) {
+                this.filter.date.start = date
+            },
 
-                if (this.messages.errors.length == 0) {
+            toggleFilter() {
+                this.filter.active = this.filter.active ? false : true
+            }
+        },
+
+        computed: {
+            showLoadMore() {
+                if (this.page.skip >= this.page.count) {
+                    return false
+                } else {
                     return true
                 }
-
-                return false
             }
         },
 
         components: {
-            AppHeader, VueAwesomplete, VueNumeric
+            AppHeader, VueDatePicker
         },
 
         async mounted() {
-            let accounts = []
-            let accountsTable = await this.accountsTable.getAll()
-            for (let i = 0; i < accountsTable.length; i++) {
-                accounts.push(accountsTable[i].name)
-            }
-            this.$refs.accountFrom.list(accounts)
-            this.$refs.accountTo.list(accounts)
+            this.page.count = await this.transactionsTable.countAll(this.filter)
+            this.loadTransaction()
         }
     }
 </script>

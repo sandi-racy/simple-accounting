@@ -1,6 +1,6 @@
 <template lang="jade">
     .container
-        transition(v-on:enter='enter', v-on:leave='leave', v-bind:css='false')
+        transition(v-on:enter='enter', v-on:leave='leave', :css='false')
             router-view
 </template>
 
@@ -25,11 +25,11 @@
     			tl.to(el, 0.5, {
     				x: 0,
     				ease: Power4.easeOut
-    			});
+    			})
 
     			tl.to(el, 1, {
     				ease: Power4.easeOut
-    			});
+    			})
             },
 
     		leave(el, done) {
@@ -39,7 +39,7 @@
     				autoAlpha: 0,
     				ease: Power4.easeOut,
     				onComplete: done
-    			});
+    			})
     		}
         }
     }
@@ -60,8 +60,17 @@
             margin: 0px
             padding: 0px
 
+    .action__choose
+        button.cancel
+            background-color: #54B0F3
+
     .awesomplete
         display: block !important
+
+    .cov-vue-date
+        display: block !important
+        font-family: 'bariol' !important
+        margin-bottom: 5px
 
     .sweet-alert
         font-family: 'bariol' !important
@@ -69,6 +78,10 @@
     .btn-primary
         background-color: #54B0F3
         border-color: #54B0F3
+
+        &:active, &:hover
+            background-color: #54B0F3
+            border-color: #54B0F3
 
     .html
         background: #F3F6FB
@@ -83,10 +96,14 @@
         top: 0px
         width: 100%
 
+    .filter
+        padding-bottom: 10px
+        padding-top: 10px
+
     .input-group
         .form-control
             z-index: 0
 
-    .button__edit
+    .button__option, .button__edit
         margin-right: 5px
 </style>

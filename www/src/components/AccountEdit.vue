@@ -1,14 +1,14 @@
 <template lang="jade">
     .row.page
-        app-header(path='/account') Edit Akun
+        app-header(path='/account') Edit Account
         .col-md-12
             form(@submit.prevent='submit')
                 ul.alert.alert-danger(v-show='isError')
                     li {{ error }}
                 .form-group
-                    label Akun
+                    label Name
                     input.form-control(type='text', v-model='account.name')
-                button.btn.btn-primary.btn-block(:disabled='disabled') Simpan
+                button.btn.btn-primary.btn-block(:disabled='disabled') Save
 </template>
 
 <script>
@@ -32,7 +32,7 @@
 
                 if (this.validate()) {
                     this.accountsTable.update(this.account)
-                    this.alert.info('Data berhasil disimpan', () => {
+                    this.alert.info('Data has been saved', () => {
                         self.$router.push('/account')
                     })
                 } else {
@@ -44,7 +44,7 @@
 
             validate() {
                 if (this.account.name.trim() == '') {
-                    this.error = 'Nama akun harus diisi'
+                    this.error = 'The name field is required'
                 }
 
                 if (this.error == '') {

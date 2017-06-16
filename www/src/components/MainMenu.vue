@@ -8,19 +8,22 @@
                 span.main-menu__item__text Dashboard
             li.main-menu__item(@click="go('/account')")
                 i.fa.fa-user
-                span.main-menu__item__text Master Akun
+                span.main-menu__item__text Accounts
             li.main-menu__item(@click="go('/transaction')")
                 i.fa.fa-pencil-square-o
-                span.main-menu__item__text Transaksi
+                span.main-menu__item__text Transactions
             li.main-menu__item(@click="go('/journal')")
                 i.fa.fa-list
-                span.main-menu__item__text Ayat Jurnal
+                span.main-menu__item__text Journal
             li.main-menu__item
                 i.fa.fa-book
-                span.main-menu__item__text Buku Besar
+                span.main-menu__item__text Ledger
             li.main-menu__item
                 i.fa.fa-balance-scale
-                span.main-menu__item__text Neraca Saldo
+                span.main-menu__item__text Trial Balance
+            li.main-menu__item
+                i.fa.fa-info-circle
+                span.main-menu__item__text About
         .main-menu__overlay(:class='{ active: active }', @click='close')
 </template>
 
@@ -58,7 +61,6 @@
         position: fixed
         top: 0px
         width: 100%
-        z-index: 100
 
     .main-menu__title
         color: #FFFFFF

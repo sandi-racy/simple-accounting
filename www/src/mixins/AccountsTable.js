@@ -7,7 +7,7 @@ const mixin = {
                 getAll() {
                     let self = this
                     let accounts = []
-                    
+
                     return new Promise((resolve, reject) => {
                         db.transaction((tx) => {
                             tx.executeSql('SELECT rowid, name FROM accounts ORDER BY name', [], (tx, results) => {

@@ -1,11 +1,11 @@
 <template lang="jade">
     .row.page
-        app-header(path='/') Master Akun
+        app-header(path='/') Accounts
         .col-md-12
             table.table.table-striped
                 thead
                     tr
-                        th Nama
+                        th Name
                         th
                 tbody
                     tr(v-for='account in accounts')
@@ -31,19 +31,19 @@
             remove(id) {
                 let self = this
 
-                this.alert.confirm('Apakah anda yakin?', 'Seluruh transaksi yang bersangkutan dengan akun ini akan dihapus', 'warning', () => {
+                this.alert.confirm('Are you sure?', 'All transactions of this account will be deleted', 'warning', () => {
                     this.accountsTable.remove(id)
                     this.transactionsTable.removeAccount(id)
 
-                    this.alert.info('Data berhasil dihapus', () => {
+                    this.alert.info('Data has been deleted', () => {
                         this.accounts = this.accountsTable.getAll()
                     })
                 })
             }
         },
 
-        mounted() {
-            this.accounts = this.accountsTable.getAll()
+        async mounted() {
+            this.accounts = await this.accountsTable.getAll()
         },
 
 		components: {
