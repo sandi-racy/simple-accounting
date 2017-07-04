@@ -15,7 +15,7 @@
                     label Nominal
                     .input-group
                         .input-group-addon Rp
-                        vue-numeric.form-control(v-model='value')
+                        vue-numeric.form-control(v-model='value', separator='.', :format-input='true', min=2000, max=3000000, precision=2)
                 button.btn.btn-primary.btn-block(:disabled='disabled') Save
 </template>
 

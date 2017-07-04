@@ -1,6 +1,25 @@
+import moment from 'moment'
+
 const mixin = {
     data() {
         return {
+            action: {
+                choose(callback) {
+                    swal({
+                        title: 'Choose your action',
+                        text: null,
+                        type: null,
+                        showCancelButton: true,
+                        cancelButtonColor: '#54B0F3',
+                        cancelButtonText: 'Edit',
+                        confirmButtonColor: '#D43F3A',
+                        confirmButtonText: 'Delete',
+                        closeOnConfirm: false,
+                        customClass: 'action__choose'
+                    }, callback)
+                }
+            },
+
             alert: {
                 confirm(title, text, type, callback) {
                     swal({
@@ -25,20 +44,11 @@ const mixin = {
                 }
             },
 
-            action: {
-                choose(callback) {
-                    swal({
-                        title: 'Choose your action',
-                        text: null,
-                        type: null,
-                        showCancelButton: true,
-                        cancelButtonColor: '#54B0F3',
-                        cancelButtonText: 'Edit',
-                        confirmButtonColor: '#D43F3A',
-                        confirmButtonText: 'Delete',
-                        closeOnConfirm: false,
-                        customClass: 'action__choose'
-                    }, callback)
+            helper: {
+                date: {
+                    format(date) {
+                        return moment(date).format('DD/MM/YY')
+                    }
                 }
             }
         }

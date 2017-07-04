@@ -46,6 +46,34 @@ const mixin = {
                     }, this.transactionError)
                 },
 
+                journal: {
+                    getAll() {
+                        let journals = []
+
+                        return new Promise((resolve, reject) => {
+                            db.transaction((tx) => {
+                                tx.executeSql('SELECT rowid, date, (SELECT name FROM accounts WHERE rowid = transactions.account_from) AS account_from, (SELECT name FROM accounts WHERE rowid = transactions.account_to) AS account_to, value FROM transactions ORDER BY rowid', [], (tx, results) => {
+                                    for (let i = 0; i < results.rows.length; i++) {
+                                        journals.push(results.rows.item(i))
+                                    }
+                                    resolve(journals)
+                                })
+                            }, this.transactionError)
+                        })
+                    },
+
+                    total() {
+                        return new Promise((resolve, reject) => {
+                            db.transaction((tx) => {
+                                tx.executeSql('SELECT SUM(value) AS value', [], (tx, results) => {
+                                    console.log(results.rows.item(i))
+                                    resolve(results.rows.item(i).value)
+                                })
+                            }, this.transactionError)
+                        })
+                    }
+                },
+
                 remove(id) {
                     db.transaction((tx) => {
                         tx.executeSql('DELETE FROM transactions WHERE rowid = ?', [id])

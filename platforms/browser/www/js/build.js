@@ -4761,19 +4761,6 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var dP         = __webpack_require__(20)
-  , createDesc = __webpack_require__(39);
-module.exports = __webpack_require__(10) ? function(object, key, value){
-  return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
-  object[key] = value;
-  return object;
-};
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
@@ -4815,11 +4802,24 @@ exports.default = function (fn) {
 };
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(242);
 
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP         = __webpack_require__(20)
+  , createDesc = __webpack_require__(39);
+module.exports = __webpack_require__(10) ? function(object, key, value){
+  return dP.f(object, key, createDesc(1, value));
+} : function(object, key, value){
+  object[key] = value;
+  return object;
+};
 
 /***/ }),
 /* 10 */
@@ -6134,7 +6134,7 @@ module.exports = (
 var global    = __webpack_require__(3)
   , core      = __webpack_require__(6)
   , ctx       = __webpack_require__(17)
-  , hide      = __webpack_require__(7)
+  , hide      = __webpack_require__(9)
   , PROTOTYPE = 'prototype';
 
 var $export = function(type, name, source){
@@ -6220,7 +6220,7 @@ module.exports = __webpack_require__(3).document && document.documentElement;
 var LIBRARY        = __webpack_require__(38)
   , $export        = __webpack_require__(34)
   , redefine       = __webpack_require__(219)
-  , hide           = __webpack_require__(7)
+  , hide           = __webpack_require__(9)
   , has            = __webpack_require__(18)
   , Iterators      = __webpack_require__(11)
   , $iterCreate    = __webpack_require__(209)
@@ -6460,7 +6460,7 @@ __webpack_require__(37)(String, 'String', function(iterated){
 
 __webpack_require__(227);
 var global        = __webpack_require__(3)
-  , hide          = __webpack_require__(7)
+  , hide          = __webpack_require__(9)
   , Iterators     = __webpack_require__(11)
   , TO_STRING_TAG = __webpack_require__(2)('toStringTag');
 
@@ -17900,9 +17900,33 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var mixin = {
     data: function data() {
         return {
+            action: {
+                choose: function choose(callback) {
+                    swal({
+                        title: 'Choose your action',
+                        text: null,
+                        type: null,
+                        showCancelButton: true,
+                        cancelButtonColor: '#54B0F3',
+                        cancelButtonText: 'Edit',
+                        confirmButtonColor: '#D43F3A',
+                        confirmButtonText: 'Delete',
+                        closeOnConfirm: false,
+                        customClass: 'action__choose'
+                    }, callback);
+                }
+            },
+
             alert: {
                 confirm: function confirm(title, text, type, callback) {
                     swal({
@@ -17926,20 +17950,11 @@ var mixin = {
                 }
             },
 
-            action: {
-                choose: function choose(callback) {
-                    swal({
-                        title: 'Choose your action',
-                        text: null,
-                        type: null,
-                        showCancelButton: true,
-                        cancelButtonColor: '#54B0F3',
-                        cancelButtonText: 'Edit',
-                        confirmButtonColor: '#D43F3A',
-                        confirmButtonText: 'Delete',
-                        closeOnConfirm: false,
-                        customClass: 'action__choose'
-                    }, callback);
+            helper: {
+                date: {
+                    format: function format(date) {
+                        return (0, _moment2.default)(date).format('DD/MM/YY');
+                    }
                 }
             }
         };
@@ -18018,8 +18033,8 @@ var mixin = {
                     return new _promise2.default(function (resolve, reject) {
                         db.transaction(function (tx) {
                             tx.executeSql('SELECT rowid, date, (SELECT name FROM accounts WHERE rowid = transactions.account_from) AS account_from, (SELECT name FROM accounts WHERE rowid = transactions.account_to) AS account_to, value FROM transactions WHERE date BETWEEN ? AND ? ORDER BY rowid DESC LIMIT ?, ?', [filterData.date.start, filterData.date.end, page.skip, page.take], function (tx, results) {
-                                for (var i = 0; i < results.rows.length; i++) {
-                                    transactions.push(results.rows.item(i));
+                                for (var _i = 0; _i < results.rows.length; _i++) {
+                                    transactions.push(results.rows.item(_i));
                                 }
                                 resolve(transactions);
                             });
@@ -18031,6 +18046,39 @@ var mixin = {
                         tx.executeSql('INSERT INTO transactions (account_from, account_to, value, date) VALUES (?, ?, ?, ?)', [accountFromId, accountToId, value, (0, _moment2.default)().format('YYYY-MM-DD')]);
                     }, this.transactionError);
                 },
+
+
+                journal: {
+                    getAll: function getAll() {
+                        var _this4 = this;
+
+                        var journals = [];
+
+                        return new _promise2.default(function (resolve, reject) {
+                            db.transaction(function (tx) {
+                                tx.executeSql('SELECT rowid, date, (SELECT name FROM accounts WHERE rowid = transactions.account_from) AS account_from, (SELECT name FROM accounts WHERE rowid = transactions.account_to) AS account_to, value FROM transactions ORDER BY rowid', [], function (tx, results) {
+                                    for (var _i2 = 0; _i2 < results.rows.length; _i2++) {
+                                        journals.push(results.rows.item(_i2));
+                                    }
+                                    resolve(journals);
+                                });
+                            }, _this4.transactionError);
+                        });
+                    },
+                    total: function total() {
+                        var _this5 = this;
+
+                        return new _promise2.default(function (resolve, reject) {
+                            db.transaction(function (tx) {
+                                tx.executeSql('SELECT SUM(value) AS value', [], function (tx, results) {
+                                    console.log(results.rows.item(i));
+                                    resolve(results.rows.item(i).value);
+                                });
+                            }, _this5.transactionError);
+                        });
+                    }
+                },
+
                 remove: function remove(id) {
                     db.transaction(function (tx) {
                         tx.executeSql('DELETE FROM transactions WHERE rowid = ?', [id]);
@@ -33896,6 +33944,15 @@ exports.default = {
       default: '',
       required: false,
       type: String
+    },
+
+    /**
+     * Enable/Disable formatting on input.
+     */
+    formatInput: {
+      default: false,
+      required: false,
+      type: Boolean
     }
   },
 
@@ -33911,6 +33968,25 @@ exports.default = {
      * @return {Number}
      */
     amountValue: function amountValue() {
+      if (this.formatInput) {
+        var value = this.amount.replace(/[^0-9-]/g, '');
+
+        if (value === '') {
+          return this.minValue;
+        }
+
+        if (this.precision > 0) {
+          var decimalSeparatorPosition = value.length - this.precision;
+          return Number(value.slice(0, decimalSeparatorPosition) + '.' + value.slice(decimalSeparatorPosition, value.length));
+        } else if (value < this.minValue) {
+          return this.minValue;
+        } else if (value > this.maxValue) {
+          return this.maxValue;
+        } else {
+          return value;
+        }
+      }
+
       return this.formatToNumber(this.amount);
     },
 
@@ -34030,14 +34106,19 @@ exports.default = {
       } else {
         this.updateValue(value);
       }
+
+      if (this.formatInput) {
+        this.formatValue(this.amountValue);
+      }
     },
 
 
     /**
      * Format value using symbol and separator.
+     * @param {Number} value
      */
-    formatValue: function formatValue() {
-      this.amount = _accountingJs2.default.formatMoney(this.numberValue, {
+    formatValue: function formatValue(value) {
+      this.amount = _accountingJs2.default.formatMoney(value, {
         symbol: this.currency + ' ',
         precision: Number(this.precision),
         decimal: this.decimalSeparator,
@@ -34075,6 +34156,16 @@ exports.default = {
      */
     convertToNumber: function convertToNumber(value) {
       this.amount = this.numberToString(value);
+    },
+
+
+    /**
+     * Check the format-input props is enable or not
+     */
+    focus: function focus() {
+      if (!this.formatInput) {
+        this.convertToNumber(this.numberValue);
+      }
     }
   },
 
@@ -34118,7 +34209,7 @@ exports.default = {
     // Check default value from parent v-model.
     if (this.value) {
       this.processValue(this.formatToNumber(this.value));
-      this.formatValue(this.value);
+      this.formatValue(this.formatToNumber(this.value));
     }
 
     // Set read-only span element's class
@@ -34129,7 +34220,7 @@ exports.default = {
     // In case of delayed v-model new value.
     setTimeout(function () {
       _this2.processValue(_this2.formatToNumber(_this2.value));
-      _this2.formatValue(_this2.value);
+      _this2.formatValue(_this2.formatToNumber(_this2.value));
     }, 500);
   }
 }; //
@@ -34159,11 +34250,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _regenerator = __webpack_require__(9);
+var _regenerator = __webpack_require__(8);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(8);
+var _asyncToGenerator2 = __webpack_require__(7);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -34256,11 +34347,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _regenerator = __webpack_require__(9);
+var _regenerator = __webpack_require__(8);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(8);
+var _asyncToGenerator2 = __webpack_require__(7);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -34476,8 +34567,16 @@ exports.default = {
 
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
+
+var _regenerator = __webpack_require__(8);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(7);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 var _AppHeader = __webpack_require__(13);
 
@@ -34486,10 +34585,83 @@ var _AppHeader2 = _interopRequireDefault(_AppHeader);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
-	components: {
-		AppHeader: _AppHeader2.default
-	}
+    data: function data() {
+        return {
+            date: {
+                print: {
+                    last: ''
+                }
+            },
+            journals: [],
+            total: 0
+        };
+    },
+
+
+    methods: {
+        isDatePrinted: function isDatePrinted(date) {
+            if (date == this.date.print.last) {
+                return null;
+            }
+
+            this.date.print.last = date;
+            return this.helper.date.format(date);
+        }
+    },
+
+    components: {
+        AppHeader: _AppHeader2.default
+    },
+
+    mounted: function mounted() {
+        var _this = this;
+
+        return (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+            return _regenerator2.default.wrap(function _callee$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            _context.next = 2;
+                            return _this.transactionsTable.journal.getAll
+                            //this.total = await this.transactionsTable.journal.total()
+                            ();
+
+                        case 2:
+                            _this.journals = _context.sent;
+
+                        case 3:
+                        case 'end':
+                            return _context.stop();
+                    }
+                }
+            }, _callee, _this);
+        }))();
+    }
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -34570,11 +34742,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _regenerator = __webpack_require__(9);
+var _regenerator = __webpack_require__(8);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(8);
+var _asyncToGenerator2 = __webpack_require__(7);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -34621,7 +34793,7 @@ exports.default = {
             page: {
                 count: 0,
                 skip: 0,
-                take: 1
+                take: 10
             },
             transactions: []
         };
@@ -34821,11 +34993,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _regenerator = __webpack_require__(9);
+var _regenerator = __webpack_require__(8);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(8);
+var _asyncToGenerator2 = __webpack_require__(7);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -35064,11 +35236,11 @@ var _promise = __webpack_require__(15);
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _regenerator = __webpack_require__(9);
+var _regenerator = __webpack_require__(8);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(8);
+var _asyncToGenerator2 = __webpack_require__(7);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
@@ -35442,7 +35614,7 @@ var create         = __webpack_require__(213)
   , IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-__webpack_require__(7)(IteratorPrototype, __webpack_require__(2)('iterator'), function(){ return this; });
+__webpack_require__(9)(IteratorPrototype, __webpack_require__(2)('iterator'), function(){ return this; });
 
 module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
@@ -35677,7 +35849,7 @@ module.exports = Object.keys || function keys(O){
 /* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var hide = __webpack_require__(7);
+var hide = __webpack_require__(9);
 module.exports = function(target, src, safe){
   for(var key in src){
     if(safe && target[key])target[key] = src[key];
@@ -35689,7 +35861,7 @@ module.exports = function(target, src, safe){
 /* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7);
+module.exports = __webpack_require__(9);
 
 /***/ }),
 /* 220 */
@@ -41345,6 +41517,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "input-group-addon"
   }, [_vm._v("Rp")]), _c('vue-numeric', {
     staticClass: "form-control",
+    attrs: {
+      "separator": ".",
+      "format-input": true,
+      "min": "2000",
+      "max": "3000000",
+      "precision": "2"
+    },
     model: {
       value: (_vm.value),
       callback: function($$v) {
@@ -41812,11 +41991,36 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "path": "/"
     }
-  }, [_vm._v("Ayat Jurnal")]), _vm._m(0)], 1)
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
+  }, [_vm._v("Journal")]), _c('div', {
     staticClass: "col-md-12"
-  }, [_c('h4', [_vm._v("Journal")])])
+  }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
+    staticClass: "col-md-12"
+  }, [_c('table', {
+    staticClass: "table table-striped"
+  }, [_vm._m(0), _c('tbody', [_vm._l((_vm.journals), function(journal) {
+    return [_c('tr', [_c('td', [_vm._v(_vm._s(_vm.isDatePrinted(journal.date)))]), _c('td', [_vm._v(_vm._s(journal.account_from))]), _c('td', {
+      staticClass: "text-right"
+    }, [_vm._v("0")]), _c('td', {
+      staticClass: "text-right"
+    }, [_vm._v(_vm._s(_vm._f("price")(journal.value)))])]), _c('tr', [_c('td', [_vm._v(_vm._s(_vm.isDatePrinted(journal.date)))]), _c('td', [_vm._v(_vm._s(journal.account_to))]), _c('td', {
+      staticClass: "text-right"
+    }, [_vm._v(_vm._s(_vm._f("price")(journal.value)))]), _c('td', {
+      staticClass: "text-right"
+    }, [_vm._v("0")])])]
+  }), _c('tr', [_c('td', {
+    staticClass: "h3",
+    attrs: {
+      "colspan": "2"
+    }
+  }, [_vm._v("Total")]), _c('td', {
+    staticClass: "h3 text-right"
+  }, [_vm._v(_vm._s(_vm.total))]), _c('td', {
+    staticClass: "h3 text-right"
+  }, [_vm._v(_vm._s(_vm.total))])])], 2)])])])])], 1)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('thead', [_c('tr', [_c('th', [_vm._v("Date")]), _c('th', [_vm._v("Account")]), _c('th', [_vm._v("Debit")]), _c('th', [_vm._v("Credit")])])])
 }]}
 module.exports.render._withStripped = true
 if (false) {
@@ -41938,16 +42142,16 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "value": (_vm.amount)
     },
     on: {
-      "blur": _vm.formatValue,
+      "blur": function($event) {
+        _vm.formatValue(_vm.amountValue)
+      },
       "input": [function($event) {
         if ($event.target.composing) { return; }
         _vm.amount = $event.target.value
       }, function($event) {
         _vm.processValue(_vm.amountValue)
       }],
-      "focus": function($event) {
-        _vm.convertToNumber(_vm.numberValue)
-      }
+      "focus": _vm.focus
     }
   }) : _c('span', {
     ref: "readOnly"
